@@ -27,20 +27,15 @@ struct ContentView: View {
     }
 }
 
+import Combine
 class Store: ObservableObject {
-    @Published var itemEntities: Results<ItemEntity> = ItemEntity.all()
+    var objectWillChange: ObservableObjectPublisher = .init()
+    private(set) var itemEntities: Results<ItemEntity> = ItemEntity.all()
     private var notificationTokens: [NotificationToken] = []
     
     init() {
-        notificationTokens.append(itemEntities.observe { change in
-            switch change {
-            case let .initial(results):
-                self.itemEntities = results
-            case let .update(results, _, _, _):
-                self.itemEntities = results
-            case let .error(error):
-                print(error.localizedDescription)
-            }
+        notificationTokens.append(itemEntities.observe { _ in
+            self.objectWillChange.send()
         })
     }
     
