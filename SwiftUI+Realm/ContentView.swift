@@ -40,9 +40,7 @@ class Store: ObservableObject {
     }
     
     deinit {
-        notificationTokens.forEach {
-            NotificationCenter.default.removeObserver($0)
-        }
+        notificationTokens.forEach { $0.invalidate() }
     }
 }
 
